@@ -24,11 +24,6 @@ def reorder_queue(item: str, copy: str | None = None):
 
 def place_reservation(member: str, item: str, copy: str | None = None, notes: str | None = None):
     validate_member_for_issue(member)
-    if frappe.db.exists(
-        "Library Reservation",
-        {"member": member, "item": item, "copy": copy or ["in", ("", None)], "status": ["in", ["Pending", "Ready for Pickup"]]},
-    ):
-        frappe.throw("An active reservation already exists for this member and title.")
 
     reservation = frappe.get_doc(
         {

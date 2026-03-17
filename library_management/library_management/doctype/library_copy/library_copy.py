@@ -12,6 +12,7 @@ class LibraryCopy(Document):
 
     def validate(self):
         self.sync_item_flags()
+        self.sync_status_rules()
         if self.is_reference_only:
             self.status = "Reference Only"
             self.is_borrowable = 0
@@ -27,7 +28,18 @@ class LibraryCopy(Document):
         )
         if values:
             self.item_name = values.item_name
-            if not self.is_reference_only:
+            if self.is_new():
                 self.is_reference_only = values.library_is_reference_only
-            if not self.is_borrowable:
                 self.is_borrowable = values.library_is_borrowable
+
+    def sync_status_rules(self):
+        if self.status in {"Issued", "Reserved"} and not self.current_member:
+            self.current_member = frappe.db.get_value(
+                "Library Transaction",
+                {"copy": self.name, "status": ["in", ["Issued", "Overdue"]]},
+                "member",
+                order_by="modified desc",
+            )
+
+        if self.status in {"Available", "Under Repair", "Reference Only", "Withdrawn", "Lost"}:
+            self.current_member = None

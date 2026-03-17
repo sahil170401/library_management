@@ -8,7 +8,7 @@ class LibraryFine(Document):
             self.name = make_autoname("LIB-FINE-.YYYY.-.#####")
 
     def validate(self):
-        self.outstanding_amount = (self.amount or 0) - (self.paid_amount or 0) - (self.waived_amount or 0)
+        self.outstanding_amount = max((self.amount or 0) - (self.paid_amount or 0) - (self.waived_amount or 0), 0)
         if self.outstanding_amount <= 0:
             self.status = "Paid" if (self.paid_amount or 0) >= (self.amount or 0) else "Waived"
         elif self.paid_amount:

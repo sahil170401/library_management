@@ -267,6 +267,57 @@ def create_activity_demo_data():
     }
 
 
+@frappe.whitelist()
+def create_copy_model_demo_data():
+    _ensure_settings("Hybrid")
+    _purge_copy_model_demo_data()
+
+    shelf = _ensure_shelf("COPY-DEMO-01", "Main Library", "Circulation")
+    item = _ensure_item(
+        "LIB-COPY-DEMO-001",
+        "Python Fundamentals - Copy Model Demo",
+        library_material_type="Book",
+        library_authors="Demo Author",
+        library_isbn_13="9780000099001",
+    )
+
+    member = _ensure_member("Copy Model Demo Member", "Student", member_card_no="COPY-DEMO-001")
+
+    copies = {
+        "available": _ensure_copy(item.name, "COPY-ACC-001", "COPY-BC-001", shelf),
+        "issued": _ensure_copy(item.name, "COPY-ACC-002", "COPY-BC-002", shelf),
+        "repair": _ensure_copy(item.name, "COPY-ACC-003", "COPY-BC-003", shelf),
+    }
+
+    for copy_name in copies.values():
+        _reset_demo_copy(copy_name)
+
+    issue_copy(member, copies["issued"], issue_date=add_days(today(), -3))
+
+    frappe.db.set_value(
+        "Library Copy",
+        copies["repair"],
+        {
+            "status": "Under Repair",
+            "condition_status": "Damaged",
+            "current_member": None,
+        },
+        update_modified=False,
+    )
+
+    refresh_member_counters(member)
+
+    return {
+        "item": item.name,
+        "member": member,
+        "copies": {
+            "available": copies["available"],
+            "issued": copies["issued"],
+            "repair": copies["repair"],
+        },
+    }
+
+
 def _purge_existing_activity_demo_data():
     reservation_names = frappe.get_all(
         "Library Reservation",
@@ -308,6 +359,30 @@ def _purge_existing_activity_demo_data():
             pluck="name",
         ):
             frappe.delete_doc("Library Fine", name, ignore_permissions=True, force=1)
+
+    for copy_name in demo_copies:
+        _reset_demo_copy(copy_name)
+
+
+def _purge_copy_model_demo_data():
+    demo_copies = set(
+        frappe.get_all(
+            "Library Copy",
+            filters={"accession_no": ["like", "COPY-ACC-%"]},
+            pluck="name",
+        )
+    )
+
+    if demo_copies:
+        for name in frappe.get_all(
+            "Library Transaction",
+            filters={"copy": ["in", list(demo_copies)]},
+            pluck="name",
+        ):
+            fine = frappe.db.get_value("Library Transaction", name, "fine")
+            if fine and frappe.db.exists("Library Fine", fine):
+                frappe.delete_doc("Library Fine", fine, ignore_permissions=True, force=1)
+            frappe.delete_doc("Library Transaction", name, ignore_permissions=True, force=1)
 
     for copy_name in demo_copies:
         _reset_demo_copy(copy_name)

@@ -41,6 +41,14 @@ def _get_member_payload(member_name: str | None):
 
 
 @frappe.whitelist()
+def get_library_member_context(member: str):
+    member_payload = _get_member_payload(member)
+    if not member_payload:
+        frappe.throw("Library Member not found.")
+    return {"member": member_payload}
+
+
+@frappe.whitelist()
 def barcode_lookup(scan_value: str = "", item: str | None = None, member: str | None = None):
     copy_name = None
     if scan_value:
@@ -57,6 +65,7 @@ def barcode_lookup(scan_value: str = "", item: str | None = None, member: str | 
 
     payload = _get_copy_payload(copy_name)
     payload["member"] = _get_member_payload(member)
+    payload["copy_member"] = _get_member_payload(payload["copy"].get("current_member"))
     return payload
 
 
