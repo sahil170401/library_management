@@ -46,6 +46,8 @@ fixtures = [
                     "Item-library_classification_code",
                     "Item-library_keywords",
                     "Item-library_summary",
+                    "Item-library_front_cover",
+                    "Item-library_back_cover",
                     "Sales Invoice-library_member",
                     "Sales Invoice-library_transaction",
                     "Sales Invoice-library_fine",
@@ -77,6 +79,12 @@ has_permission = {
     "Library Transaction": "library_management.permissions.has_library_transaction_permission",
     "Library Reservation": "library_management.permissions.has_library_reservation_permission",
     "Library Fine": "library_management.permissions.has_library_fine_permission",
+}
+
+doc_events = {
+    "Purchase Receipt": {
+        "on_submit": "library_management.services.procurement.on_purchase_receipt_submit",
+    }
 }
 
 standard_portal_menu_items = [

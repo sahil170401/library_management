@@ -174,6 +174,26 @@
   },
   {
     "doctype": "Custom Field",
+    "dt": "Item",
+    "fieldname": "library_front_cover",
+    "fieldtype": "Attach Image",
+    "insert_after": "library_summary",
+    "label": "Front Cover",
+    "module": "Library Management",
+    "name": "Item-library_front_cover"
+  },
+  {
+    "doctype": "Custom Field",
+    "dt": "Item",
+    "fieldname": "library_back_cover",
+    "fieldtype": "Attach Image",
+    "insert_after": "library_front_cover",
+    "label": "Back Cover",
+    "module": "Library Management",
+    "name": "Item-library_back_cover"
+  },
+  {
+    "doctype": "Custom Field",
     "dt": "Sales Invoice",
     "fieldname": "library_member",
     "fieldtype": "Link",

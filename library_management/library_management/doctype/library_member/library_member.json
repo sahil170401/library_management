@@ -17,6 +17,8 @@
   "mobile_no",
   "guardian_name",
   "guardian_contact",
+  "allocation_history_section",
+  "previous_allocation_html",
   "linkage_section",
   "user",
   "column_break_1",
@@ -68,6 +70,8 @@
   {"fieldname": "circulation_section", "fieldtype": "Section Break", "label": "Circulation Summary"},
   {"default": "0", "fieldname": "current_issued_count", "fieldtype": "Int", "label": "Current Issued Count", "read_only": 1},
   {"default": "0", "fieldname": "outstanding_fines", "fieldtype": "Currency", "label": "Outstanding Fines", "read_only": 1},
+  {"fieldname": "allocation_history_section", "fieldtype": "Section Break", "label": "Previous Allocation"},
+  {"fieldname": "previous_allocation_html", "fieldtype": "HTML", "label": "Previous Allocation"},
   {"fieldname": "notes_section", "fieldtype": "Section Break", "label": "Notes"},
   {"fieldname": "notes", "fieldtype": "Small Text", "label": "Notes"}
  ],

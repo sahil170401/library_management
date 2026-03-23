@@ -28,6 +28,8 @@ ITEM_CUSTOM_FIELDS = {
         {"fieldname": "library_classification_code", "fieldtype": "Data", "label": "Classification Code", "insert_after": "library_subject"},
         {"fieldname": "library_keywords", "fieldtype": "Small Text", "label": "Keywords", "insert_after": "library_classification_code"},
         {"fieldname": "library_summary", "fieldtype": "Small Text", "label": "Summary / Abstract", "insert_after": "library_keywords"},
+        {"fieldname": "library_front_cover", "fieldtype": "Attach Image", "label": "Front Cover", "insert_after": "library_summary"},
+        {"fieldname": "library_back_cover", "fieldtype": "Attach Image", "label": "Back Cover", "insert_after": "library_front_cover"},
     ],
     "Sales Invoice": [
         {"fieldname": "library_member", "fieldtype": "Link", "label": "Library Member", "options": "Library Member", "insert_after": "customer"},

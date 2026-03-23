@@ -23,7 +23,7 @@ def _get_copy_payload(copy_name: str):
     item = frappe.db.get_value(
         "Item",
         copy.item,
-        ["name", "item_name", "library_authors", "library_material_type"],
+        ["name", "item_name", "library_authors", "library_material_type", "library_front_cover", "library_back_cover"],
         as_dict=True,
     )
     return {"copy": copy, "item": item, "availability": get_item_availability(copy.item)}

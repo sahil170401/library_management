@@ -123,6 +123,43 @@ frappe.pages["library-desk"].on_page_load = function (wrapper) {
 					color: #223019;
 					font-weight: 600;
 				}
+				.library-cover-grid {
+					display: grid;
+					grid-template-columns: repeat(2, minmax(0, 1fr));
+					gap: 10px;
+					margin-bottom: 12px;
+				}
+				.library-cover-card {
+					background: #f8fbf3;
+					border: 1px solid #d9e5ce;
+					border-radius: 12px;
+					padding: 8px;
+				}
+				.library-cover-label {
+					font-size: 11px;
+					color: #6f7a67;
+					margin-bottom: 6px;
+					text-transform: uppercase;
+					letter-spacing: 0.05em;
+				}
+				.library-cover-img {
+					width: 100%;
+					height: 170px;
+					object-fit: cover;
+					border-radius: 8px;
+					background: #e9efdf;
+				}
+				.library-cover-empty {
+					height: 170px;
+					border-radius: 8px;
+					background: #edf3e3;
+					border: 1px dashed #ccdab9;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					font-size: 12px;
+					color: #6d7861;
+				}
 				.library-stat-grid {
 					display: grid;
 					grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -207,6 +244,7 @@ frappe.pages["library-desk"].on_page_load = function (wrapper) {
 
 					<div class="library-panel">
 						<div class="library-side-title">${__("Copy and Title Snapshot")}</div>
+						<div data-role="cover_photos"></div>
 						<div class="library-detail-grid">
 							<div class="library-detail-label">${__("Copy")}</div>
 							<div class="library-detail-value" data-role="copy_name">-</div>
@@ -302,6 +340,7 @@ frappe.pages["library-desk"].on_page_load = function (wrapper) {
 	};
 
 	const resetCopyAndAvailability = () => {
+		body.find("[data-role='cover_photos']").empty();
 		[
 			"copy_name",
 			"item_name",
@@ -312,6 +351,31 @@ frappe.pages["library-desk"].on_page_load = function (wrapper) {
 			"current_member"
 		].forEach((field) => setRoleValue(field, "-"));
 		["total_copies", "available_copies", "issued_copies"].forEach((field) => setRoleValue(field, 0));
+	};
+
+	const renderCoverPhotos = (item) => {
+		const front = item?.library_front_cover;
+		const back = item?.library_back_cover;
+
+		const renderCard = (label, url) => {
+			const content = url
+				? `<img class="library-cover-img" src="${frappe.utils.escape_html(url)}" alt="${frappe.utils.escape_html(label)}">`
+				: `<div class="library-cover-empty">${__("No Image")}</div>`;
+
+			return `
+				<div class="library-cover-card">
+					<div class="library-cover-label">${frappe.utils.escape_html(label)}</div>
+					${content}
+				</div>
+			`;
+		};
+
+		body.find("[data-role='cover_photos']").html(`
+			<div class="library-cover-grid">
+				${renderCard(__("Front Cover"), front)}
+				${renderCard(__("Back Cover"), back)}
+			</div>
+		`);
 	};
 
 	const renderMember = (member) => {
@@ -337,6 +401,7 @@ frappe.pages["library-desk"].on_page_load = function (wrapper) {
 		setRoleValue("total_copies", availability.total_copies || 0);
 		setRoleValue("available_copies", availability.available_copies || 0);
 		setRoleValue("issued_copies", availability.issued_copies || 0);
+		renderCoverPhotos(item);
 		if (copy.item) {
 			setValue("item", copy.item);
 		}
